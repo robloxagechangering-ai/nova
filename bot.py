@@ -219,9 +219,7 @@ def main_menu_kb(user_id: int) -> InlineKeyboardMarkup:
     builder.row(InlineKeyboardButton(text="💵 О магазине", callback_data="about"))
     builder.row(InlineKeyboardButton(text="✍️ Поддержка (@NovasHelper)", url="https://t.me/NovasHelper"))
     builder.row(InlineKeyboardButton(text="🛒 КОРЗИНА", callback_data="cart"))
-    builder.row(InlineKeyboardButton(text="🌐 Языки", callback_data="languages"),
-                InlineKeyboardButton(text="🔗 Рефералы", callback_data="referral"))
-    builder.row(InlineKeyboardButton(text="✅ Верификация", callback_data="verify"))
+    builder.row(InlineKeyboardButton(text="🔗 Рефералы", callback_data="referral"))
     if user_id == ADMIN_ID:
         builder.row(InlineKeyboardButton(text="👑 Админ-панель", callback_data="admin_panel"))
     return builder.as_markup()
@@ -284,14 +282,63 @@ WELCOME_TEXT = (
     "ИЗ ИГРЫ 🩸 <b>MURDER MYSTERY 2</b> 😎"
 )
 
-HOW_TO_PAY_TEXT = """💳 <b>Как оплатить заказ?</b>
+# ПОЛНЫЙ ТЕКСТ "КАК ОПЛАТИТЬ"
+HOW_TO_PAY_TEXT = """💳 Как оплатить заказ?
 
-Принимаем:
-💸 USDT (криптовалюта) — через @send
-⭐ Telegram Stars — через @PremiumBot
+Мы работаем по всему миру — без привязки к странам, банкам и дурацким картам.
+Покупать карты для каждой страны — дорого, геморройно и невыгодно.
 
-Подробная инструкция — в боте @send или @PremiumBot.
-После оплаты свяжитесь с поддержкой @NovasHelper для выдачи."""
+Поэтому мы принимаем два надёжных способа оплаты:
+
+💸 USDT (криптовалюта)
+⭐ Telegram Stars
+
+Если у тебя пока нет ни крипты, ни звёзд — не переживай.
+Всё решается за 5–15 минут, даже если ты делаешь это впервые.
+
+────────────────────
+1️⃣ СПОСОБ — КРИПТОВАЛЮТА (USDT)
+
+Самый быстрый и приватный способ.
+Покупай USDT через официальный бот Telegram — @send.
+Данные можно вводить любые, даже вымышленные — никто не проверяет.
+
+📱 Пошаговый туториал:
+
+1. Открой бота @send
+2. Нажми /start и пройди базовую настройку
+3. Снова нажми /start → появится кнопка P2P
+4. Нажми P2P → выбери «Оплата и валюта»
+5. Укажи валюту своей страны (например, 🇷🇺 Россия — Рубли)
+6. Нажми «Назад» — вернёшься в меню P2P
+7. Выбери «Купить» → укажи USDT (Tether)
+8. Выбери свой банк и подходящее предложение
+9. После покупки свяжись с продавцом — он объяснит детали обмена
+
+🧠 Альтернатива:
+Есть и другие магазины криптовалют — туториалы легко найти на YouTube.
+
+────────────────────
+2️⃣ СПОСОБ — TELEGRAM STARS ⭐
+
+Если крипта — не твоё, используй Telegram Stars.
+Это встроенная валюта Telegram, которая работает в любой стране.
+
+📱 Пошаговый туториал:
+
+1. Открой бота @PremiumBot
+2. Нажми /start → увидишь синюю кнопку Menu
+3. Выбери Buy or Gift Telegram Stars → /stars
+4. Выбери нужную сумму (например, 100, 500, 1000 звёзд)
+5. Свяжись с владельцем сделки и сообщи, на какую сумму тебе нужны звёзды
+6. Дождись ответа (обычно от 5 до 30 минут)
+7. Когда продавец назовёт сумму — выбери «Подарить звёзды»
+8. Введи его юзернейм и отправь звёзды
+9. После этого начинается сделка ✅
+
+📌 После оформления заказа свяжитесь с продавцом @goIanrexxx
+Если у вас спам-бан — напишите боту для связи @goIanrexxxSeller_bot, он предоставит данные для оплаты. После оплаты он выдаст товар.
+Поддержка: @NovasHelper"""
 
 ABOUT_TEXT = (
     "💵 <b>О магазине MM2 SHOP</b>\n\n"
@@ -301,12 +348,6 @@ ABOUT_TEXT = (
     "• Работаем с 2023 года\n"
     "• Гарантия на каждый скин\n\n"
     "Поддержка: @NovasHelper"
-)
-
-VERIFY_TEXT = (
-    "✅ <b>Верификация</b>\n\n"
-    "Перейти к проверенному продавцу:\n\n"
-    "👉 @GiftsForFunpay"
 )
 
 def resolve_product_name(safe_name: str) -> Optional[str]:
@@ -392,36 +433,6 @@ async def cb_about(callback: CallbackQuery):
     except Exception as e:
         logger.error("cb_about: %s\n%s", e, traceback.format_exc())
         await callback.answer()
-
-@router.callback_query(F.data == "verify")
-async def cb_verify(callback: CallbackQuery):
-    try:
-        builder = InlineKeyboardBuilder()
-        builder.row(InlineKeyboardButton(text="Перейти к @GiftsForFunpay", url="https://t.me/GiftsForFunpay"))
-        builder.row(InlineKeyboardButton(text="🏠 В главное", callback_data="main_menu"))
-        await callback.message.edit_text(VERIFY_TEXT, reply_markup=builder.as_markup())
-        await callback.answer()
-    except Exception as e:
-        logger.error("cb_verify: %s\n%s", e, traceback.format_exc())
-        await callback.answer()
-
-@router.callback_query(F.data == "languages")
-async def cb_languages(callback: CallbackQuery):
-    try:
-        builder = InlineKeyboardBuilder()
-        builder.row(InlineKeyboardButton(text="🇷🇺 Русский", callback_data="lang_ru"))
-        builder.row(InlineKeyboardButton(text="🇬🇧 English", callback_data="lang_en"))
-        builder.row(InlineKeyboardButton(text="🇨🇳 中文", callback_data="lang_zh"))
-        builder.row(InlineKeyboardButton(text="🏠 В главное", callback_data="main_menu"))
-        await callback.message.edit_text("🌐 <b>Выбор языка</b>\n\nПока заглушка.", reply_markup=builder.as_markup())
-        await callback.answer()
-    except Exception as e:
-        logger.error("cb_languages: %s\n%s", e, traceback.format_exc())
-        await callback.answer()
-
-@router.callback_query(F.data.startswith("lang_"))
-async def cb_lang_stub(callback: CallbackQuery):
-    await callback.answer("Язык пока не меняется (заглушка)", show_alert=True)
 
 @router.callback_query(F.data == "referral")
 async def cb_referral(callback: CallbackQuery):
@@ -599,18 +610,25 @@ async def cb_checkout(callback: CallbackQuery):
         total = sum(item["price"] for item in cart)
         order_id = create_order(user_id, cart, total, status="pending")
         clear_cart(user_id)
+
+        # Формируем список товаров в нужном формате
         items_text = "\n".join(f"• {item['name']} — {item['price']}₽" for item in cart)
+
+        # Новый текст после оформления
         user_msg = (
-            f"✅ <b>Заказ #{order_id} оформлен!</b>\n\n"
+            f"✅ Заказ #{order_id} оформлен!\n\n"
             f"{items_text}\n\n"
-            f"<b>Итого: {total}₽</b>\n\n"
-            "Оператор свяжется с вами для оплаты и передачи скина.\n"
-            "Поддержка: @NovasHelper"
+            f"Итого: {total}₽\n\n"
+            f"Свяжитесь с продавцом @goIanrexxx если у вас спамбан напишите боту для связи @goIanrexxxSeller_bot он вам предоставит данные для оплаты после оплаты он выдаст товар✅\n"
+            f"Поддержка: @NovasHelper"
         )
+
         builder = InlineKeyboardBuilder()
         builder.row(InlineKeyboardButton(text="🏠 В главное", callback_data="main_menu"))
         await callback.message.edit_text(user_msg, reply_markup=builder.as_markup())
         await callback.answer()
+
+        # Уведомление админу
         if ADMIN_ID:
             username = callback.from_user.username or "без username"
             admin_text = (
