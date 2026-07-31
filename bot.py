@@ -29,8 +29,8 @@ from aiogram.types import (
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 # ==================== НАСТРОЙКИ ====================
-BOT_TOKEN = os.getenv("8872095546:AAFDfftRhZhhU4R4pz1carnGvtEFmJnSgtg")
-ADMIN_ID = int(os.getenv("8822297551", "0"))
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 PORT = int(os.getenv("PORT", "10000"))
 DB_PATH = os.getenv("DB_PATH", "shop.db")
 
@@ -439,7 +439,8 @@ async def cb_referral(callback: CallbackQuery):
     except Exception as e:
         logger.error("cb_referral: %s\n%s", e, traceback.format_exc())
         await callback.answer()
-      @router.callback_query(F.data == "shop")
+
+@router.callback_query(F.data == "shop")
 async def cb_shop(callback: CallbackQuery):
     try:
         await callback.message.edit_text("💎 <b>МАГАЗИН</b>\n\nВыберите категорию:", reply_markup=shop_categories_kb())
@@ -783,7 +784,6 @@ async def cmd_banned(message: Message):
     except Exception as e:
         logger.error("cmd_banned: %s\n%s", e, traceback.format_exc())
 
-# ==================== НЕИЗВЕСТНАЯ КОМАНДА ====================
 @router.message()
 async def unknown_message(message: Message):
     try:
